@@ -1,0 +1,641 @@
+```html
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="theme-color" content="#075b3a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <title>SMU Gold Calculator</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- App Icon -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    html {
+      background: #075b3a;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f6f5;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 500px;
+      margin: auto;
+      min-height: 100vh;
+      background: white;
+      padding-bottom: 30px;
+    }
+
+    header {
+      background: #075b3a;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 15px;
+    }
+
+    .form {
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 16px 0 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #075b3a;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 17px;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .calculate {
+      background: #d4a72c;
+      color: #111;
+    }
+
+    .clear {
+      background: #eeeeee;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .install {
+      display: none;
+      background: #075b3a;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .results {
+      margin: 10px 20px;
+      padding: 20px;
+      background: #f7faf8;
+      border-radius: 14px;
+      border: 1px solid #dce9e2;
+      display: none;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .value {
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .final {
+      margin-top: 15px;
+      background: #075b3a;
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .final small {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .final strong {
+      font-size: 27px;
+    }
+
+    .warning {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #fff4d6;
+      color: #654b00;
+      font-weight: bold;
+    }
+
+    .good {
+      background: #e5f7ec;
+      color: #126b35;
+    }
+
+    .error {
+      background: #ffe5e5;
+      color: #9b1c1c;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .broker-info {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>ALOYCE WMG SMU DHAHABU</h1>
+    <p>Calculator ya kuuza dhahabu</p>
+  </header>
+
+  <div class="form">
+
+    <label>
+      1. Uzito halisi wa dhahabu baada ya kuchomwa (gramu)
+    </label>
+
+    <input
+      id="weight"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="Mfano: 100"
+    >
+
+    <label>2. Asilimia ya dhahabu (%)</label>
+
+    <input
+      id="purity"
+      type="number"
+      step="0.01"
+      min="0"
+      max="100"
+      placeholder="Mfano: 90"
+    >
+
+    <label>3. Bei rasmi ya Tume (TSh/g)</label>
+
+    <input
+      id="officialPrice"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="Mfano: 200000"
+    >
+
+    <label>4. Makato ya Serikali (%)</label>
+
+    <input
+      id="governmentFee"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="Mfano: 5"
+    >
+
+    <label>5. Bei ya broker</label>
+
+    <select id="brokerUnit" onchange="updateBrokerLabel()">
+      <option value="1">Bei kwa Gram 1</option>
+      <option value="12">Bei kwa Gram 12</option>
+    </select>
+
+    <input
+      id="brokerPrice"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="Mfano: 195000"
+    >
+
+    <div id="brokerInfo" class="broker-info">
+      Ingiza bei anayokupa broker kwa gram 1.
+    </div>
+
+    <button class="calculate" onclick="calculate()">
+      HESABU
+    </button>
+
+    <button class="clear" onclick="clearAll()">
+      FUTA
+    </button>
+
+    <button id="installButton" class="install">
+      📲 INSTALL APP
+    </button>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+  </div>
+
+  <div id="results" class="results">
+
+    <div class="row">
+      <span>Dhahabu safi</span>
+      <span class="value" id="pureGold"></span>
+    </div>
+
+    <div class="row">
+      <span>Thamani rasmi</span>
+      <span class="value" id="officialValue"></span>
+    </div>
+
+    <div class="row">
+      <span>Makato ya Serikali</span>
+      <span class="value" id="governmentAmount"></span>
+    </div>
+
+    <div class="row">
+      <span>Bei ya broker kwa gram 1</span>
+      <span class="value" id="brokerPricePerGram"></span>
+    </div>
+
+    <div class="row">
+      <span>Thamani ya broker</span>
+      <span class="value" id="brokerValue"></span>
+    </div>
+
+    <div class="row">
+      <span>Tofauti ya bei rasmi na broker</span>
+      <span class="value" id="difference"></span>
+    </div>
+
+    <div class="final">
+      <small>KIASI CHA MWISHO</small>
+      <strong id="finalAmount"></strong>
+    </div>
+
+    <div id="warning" class="warning"></div>
+
+  </div>
+
+  <div class="footer">
+    ALOYCE WMG SMU DHAHABU
+  </div>
+
+</div>
+
+<script>
+
+function money(number) {
+  return new Intl.NumberFormat('sw-TZ', {
+    style: 'currency',
+    currency: 'TZS',
+    maximumFractionDigits: 0
+  }).format(number);
+}
+
+
+function updateBrokerLabel() {
+
+  const unit = Number(
+    document.getElementById("brokerUnit").value
+  );
+
+  const info = document.getElementById("brokerInfo");
+  const input = document.getElementById("brokerPrice");
+
+  if (unit === 12) {
+
+    info.innerText =
+      "Ingiza bei anayokupa broker kwa gram 12. App itagawa kwa 12 yenyewe.";
+
+    input.placeholder =
+      "Mfano: 2400000";
+
+  } else {
+
+    info.innerText =
+      "Ingiza bei anayokupa broker kwa gram 1.";
+
+    input.placeholder =
+      "Mfano: 195000";
+  }
+}
+
+
+function calculate() {
+
+  const weight =
+    Number(document.getElementById("weight").value);
+
+  const purity =
+    Number(document.getElementById("purity").value);
+
+  const officialPrice =
+    Number(document.getElementById("officialPrice").value);
+
+  const governmentFee =
+    Number(document.getElementById("governmentFee").value);
+
+  const brokerPriceInput =
+    Number(document.getElementById("brokerPrice").value);
+
+  const brokerUnit =
+    Number(document.getElementById("brokerUnit").value);
+
+  const error =
+    document.getElementById("error");
+
+
+  if (
+    weight <= 0 ||
+    purity <= 0 ||
+    purity > 100 ||
+    officialPrice <= 0 ||
+    governmentFee < 0 ||
+    brokerPriceInput <= 0
+  ) {
+
+    error.style.display = "block";
+
+    error.innerText =
+      "Tafadhali jaza taarifa zote kwa usahihi. Asilimia ya dhahabu isiwe zaidi ya 100%.";
+
+    return;
+  }
+
+
+  error.style.display = "none";
+
+
+  // 1. Dhahabu safi
+  const pureGold =
+    weight * (purity / 100);
+
+
+  // 2. Thamani rasmi
+  const officialValue =
+    pureGold * officialPrice;
+
+
+  // 3. Makato ya Serikali
+  const governmentAmount =
+    officialValue * (governmentFee / 100);
+
+
+  // 4. Bei ya broker kwa gram 1
+  let brokerPricePerGram;
+
+  if (brokerUnit === 12) {
+
+    brokerPricePerGram =
+      brokerPriceInput / 12;
+
+  } else {
+
+    brokerPricePerGram =
+      brokerPriceInput;
+  }
+
+
+  // 5. Thamani ya broker
+  const brokerValue =
+    pureGold * brokerPricePerGram;
+
+
+  // 6. Kiasi cha mwisho
+  const finalAmount =
+    brokerValue - governmentAmount;
+
+
+  // 7. Tofauti ya bei
+  const difference =
+    pureGold *
+    (officialPrice - brokerPricePerGram);
+
+
+  // Onyesha matokeo
+
+  document.getElementById("pureGold").innerText =
+    pureGold.toFixed(2) + " g";
+
+  document.getElementById("officialValue").innerText =
+    money(officialValue);
+
+  document.getElementById("governmentAmount").innerText =
+    money(governmentAmount);
+
+  document.getElementById("brokerPricePerGram").innerText =
+    money(brokerPricePerGram);
+
+  document.getElementById("brokerValue").innerText =
+    money(brokerValue);
+
+  document.getElementById("difference").innerText =
+    money(Math.abs(difference));
+
+  document.getElementById("finalAmount").innerText =
+    money(finalAmount);
+
+
+  // Tahadhari
+
+  const warning =
+    document.getElementById("warning");
+
+
+  if (brokerPricePerGram < officialPrice) {
+
+    warning.className = "warning";
+
+    warning.innerText =
+      "⚠️ Broker anakupa bei ya chini kwa " +
+      money(Math.abs(difference)) +
+      " ukilinganisha na bei rasmi.";
+
+  } else if (brokerPricePerGram > officialPrice) {
+
+    warning.className = "warning good";
+
+    warning.innerText =
+      "✓ Bei ya broker iko juu ya bei rasmi.";
+
+  } else {
+
+    warning.className = "warning good";
+
+    warning.innerText =
+      "✓ Bei ya broker ni sawa na bei rasmi.";
+  }
+
+
+  document.getElementById("results").style.display =
+    "block";
+}
+
+
+function clearAll() {
+
+  document.getElementById("weight").value = "";
+
+  document.getElementById("purity").value = "";
+
+  document.getElementById("officialPrice").value = "";
+
+  document.getElementById("governmentFee").value = "";
+
+  document.getElementById("brokerPrice").value = "";
+
+  document.getElementById("brokerUnit").value = "1";
+
+  document.getElementById("results").style.display =
+    "none";
+
+  document.getElementById("error").style.display =
+    "none";
+
+  updateBrokerLabel();
+}
+
+
+// ================================
+// PWA INSTALL
+// ================================
+
+let deferredPrompt;
+
+const installButton =
+  document.getElementById("installButton");
+
+
+window.addEventListener("beforeinstallprompt", (event) => {
+
+  event.preventDefault();
+
+  deferredPrompt = event;
+
+  installButton.style.display = "block";
+
+});
+
+
+installButton.addEventListener("click", async () => {
+
+  if (!deferredPrompt) {
+    return;
+  }
+
+  deferredPrompt.prompt();
+
+  const { outcome } =
+    await deferredPrompt.userChoice;
+
+  console.log("Install result:", outcome);
+
+  deferredPrompt = null;
+
+  installButton.style.display = "none";
+
+});
+
+
+window.addEventListener("appinstalled", () => {
+
+  console.log("SMU Gold Calculator ime-installiwa.");
+
+  installButton.style.display = "none";
+
+});
+
+
+// ================================
+// SERVICE WORKER
+// ================================
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener("load", () => {
+
+    navigator.serviceWorker
+      .register("service-worker.js")
+      .then(() => {
+
+        console.log(
+          "SMU Gold Calculator Service Worker iko tayari."
+        );
+
+      })
+      .catch(error => {
+
+        console.log(
+          "Service Worker Error:",
+          error
+        );
+
+      });
+
+  });
+
+}
+
+
+// Anza na Gram 1
+updateBrokerLabel();
+
+</script>
+
+</body>
+</html>
+```
