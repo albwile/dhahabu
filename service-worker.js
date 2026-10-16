@@ -1,4 +1,3 @@
-```javascript
 const CACHE_NAME = "smu-gold-calculator-v1";
 
 const FILES_TO_CACHE = [
@@ -59,4 +58,3 @@ self.addEventListener("fetch", event => {
   );
 
 });
-```
