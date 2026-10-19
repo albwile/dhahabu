@@ -1,640 +1,1061 @@
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#075b3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ALOYCE WMG DHAHABU</title>
 
-  <meta name="theme-color" content="#075b3a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 
-  <title>SMU Gold Calculator</title>
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+html { background: #075b3a; }
 
-  <!-- App Icon -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+body {
+  margin: 0;
+  background: #f4f6f5;
+  color: #222;
+  min-height: 100vh;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+.app {
+  max-width: 620px;
+  margin: auto;
+  min-height: 100vh;
+  background: white;
+  padding-bottom: 30px;
+}
 
-    html {
-      background: #075b3a;
-    }
+header {
+  background: #075b3a;
+  color: white;
+  padding: 25px 16px;
+  text-align: center;
+}
 
-    body {
-      margin: 0;
-      background: #f4f6f5;
-      color: #222;
-      min-height: 100vh;
-    }
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
 
-    .app {
-      max-width: 500px;
-      margin: auto;
-      min-height: 100vh;
-      background: white;
-      padding-bottom: 30px;
-    }
+header p {
+  margin: 8px 0 0;
+  font-size: 15px;
+}
 
-    header {
-      background: #075b3a;
-      color: white;
-      padding: 25px 20px;
-      text-align: center;
-    }
+.form { padding: 18px; }
 
-    header h1 {
-      margin: 0;
-      font-size: 26px;
-    }
+label {
+  display: block;
+  font-weight: bold;
+  margin: 16px 0 7px;
+}
 
-    header p {
-      margin: 8px 0 0;
-      font-size: 15px;
-    }
+input, select {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  font-size: 17px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  background: white;
+  color: #222;
+}
 
-    .form {
-      padding: 20px;
-    }
+input:focus, select:focus { border-color: #075b3a; }
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 16px 0 7px;
-    }
+button {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+}
 
-    input,
-    select {
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      outline: none;
-      background: white;
-    }
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
 
-    input:focus,
-    select:focus {
-      border-color: #075b3a;
-    }
+.calculate {
+  background: #d4a72c;
+  color: #111;
+}
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-      padding: 17px;
-      font-size: 19px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+.clear {
+  background: #eee;
+  color: #333;
+}
 
-    .calculate {
-      background: #d4a72c;
-      color: #111;
-    }
+.install {
+  display: none;
+  background: #075b3a;
+  color: white;
+}
 
-    .clear {
-      background: #eeeeee;
-      color: #333;
-      margin-top: 10px;
-    }
+.hint, .broker-info {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 7px;
+}
 
-    .install {
-      display: none;
-      background: #075b3a;
-      color: white;
-      margin-top: 10px;
-    }
+.gold-card {
+  margin-top: 16px;
+  padding: 15px;
+  border: 1px solid #d4e3d9;
+  border-radius: 12px;
+  background: #fbfdfb;
+}
 
-    .results {
-      margin: 10px 20px;
-      padding: 20px;
-      background: #f7faf8;
-      border-radius: 14px;
-      border: 1px solid #dce9e2;
-      display: none;
-    }
+.gold-card h3 {
+  margin: 0 0 10px;
+  color: #075b3a;
+}
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 12px 0;
-      border-bottom: 1px solid #ddd;
-    }
+/* Bei yenye alama ya /= */
+.money-input, .percent-input {
+  display: flex;
+  align-items: center;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: white;
+  overflow: hidden;
+}
 
-    .row:last-child {
-      border-bottom: none;
-    }
+.money-input:focus-within, .percent-input:focus-within {
+  border-color: #075b3a;
+}
 
-    .value {
-      font-weight: bold;
-      text-align: right;
-    }
+.money-input input, .percent-input input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  background: transparent;
+}
 
-    .final {
-      margin-top: 15px;
-      background: #075b3a;
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-    }
+.money-input input:focus, .percent-input input:focus {
+  border-color: transparent;
+}
 
-    .final small {
-      display: block;
-      margin-bottom: 8px;
-    }
+.money-input span, .percent-input span {
+  padding: 0 14px;
+  font-size: 19px;
+  font-weight: bold;
+  color: #075b3a;
+  white-space: nowrap;
+}
 
-    .final strong {
-      font-size: 27px;
-    }
+/* Makosa */
+.error {
+  display: none;
+  margin-top: 14px;
+  padding: 13px;
+  background: #ffe5e5;
+  color: #9b1c1c;
+  border-radius: 9px;
+  font-weight: bold;
+  line-height: 1.5;
+}
 
-    .warning {
-      margin-top: 15px;
-      padding: 15px;
-      border-radius: 10px;
-      background: #fff4d6;
-      color: #654b00;
-      font-weight: bold;
-    }
+/* Matokeo */
+.results {
+  display: none;
+  padding: 18px;
+}
 
-    .good {
-      background: #e5f7ec;
-      color: #126b35;
-    }
+.results h2 {
+  color: #075b3a;
+  font-size: 21px;
+}
 
-    .error {
-      background: #ffe5e5;
-      color: #9b1c1c;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 10px;
-      font-weight: bold;
-    }
+.result-card {
+  margin: 14px 0;
+  padding: 14px;
+  background: #f7faf8;
+  border: 1px solid #dce9e2;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
 
-    .broker-info {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #666;
-    }
+.result-card h3 {
+  color: #075b3a;
+  margin-top: 0;
+}
 
-    .footer {
-      text-align: center;
-      color: #777;
-      font-size: 12px;
-      padding: 20px;
-    }
-  </style>
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.row span:first-child { flex: 1; }
+
+.value {
+  font-weight: bold;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.row:last-child { border-bottom: none; }
+
+.total {
+  margin-top: 20px;
+  padding: 17px;
+  border-radius: 12px;
+  background: #075b3a;
+  color: white;
+}
+
+.total h2 { color: white; }
+
+.total .row { border-color: #ffffff40; }
+
+.final {
+  margin-top: 15px;
+  padding: 18px;
+  background: #d4a72c;
+  color: #111;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.final small {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.final strong {
+  display: block;
+  font-size: 26px;
+  overflow-wrap: anywhere;
+}
+
+.warning {
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: 9px;
+  background: #fff4d6;
+  color: #654b00;
+  line-height: 1.5;
+}
+
+.good {
+  background: #e5f7ec;
+  color: #126b35;
+}
+
+.footer {
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  padding: 20px;
+}
+
+/* JUA KUBWA LINACHOMOZA */
+.sunrise-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: linear-gradient(
+    to top,
+    #075b3a 0%,
+    #174f59 40%,
+    #172d49 100%
+  );
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.sunrise-overlay.active { display: flex; }
+
+.sunrise-scene {
+  position: relative;
+  width: min(90vw, 420px);
+  height: min(65vw, 330px);
+  min-height: 240px;
+  overflow: hidden;
+}
+
+.sunrise-horizon {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #ffe59a;
+  box-shadow: 0 0 18px #ffc44d;
+  border-radius: 50%;
+}
+
+.sunrise-sun {
+  position: absolute;
+  width: clamp(150px, 42vw, 230px);
+  height: clamp(150px, 42vw, 230px);
+  left: 50%;
+  bottom: 25px;
+  transform: translateX(-50%) translateY(260px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 28%,
+    #fffde0 0%,
+    #ffe77b 30%,
+    #ffbd43 65%,
+    #ff762e 100%
+  );
+  box-shadow:
+    0 0 35px #ffdc65,
+    0 0 80px #ffb347,
+    0 0 140px #ff8c42;
+  opacity: 0;
+}
+
+.sunrise-rays {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #ffdf7545 0%,
+    #ffbd3030 35%,
+    transparent 72%
+  );
+  opacity: 0;
+}
+
+.sunrise-overlay.active .sunrise-sun {
+  animation: sunrise 3s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+.sunrise-overlay.active .sunrise-rays {
+  animation: raysAppear 3s ease-out forwards;
+}
+
+.sunrise-title {
+  margin-top: 15px;
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: bold;
+}
+
+.sunrise-subtitle {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #e4f2e9;
+}
+
+.sunrise-loader {
+  width: 180px;
+  height: 5px;
+  margin-top: 25px;
+  border-radius: 10px;
+  background: #ffffff35;
+  overflow: hidden;
+}
+
+.sunrise-loader::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #ffe07b;
+  border-radius: 10px;
+  animation: loadingBar 3s ease-in-out forwards;
+}
+
+@keyframes sunrise {
+  0% {
+    transform: translateX(-50%) translateY(260px);
+    opacity: 0;
+  }
+  20% { opacity: 1; }
+  100% {
+    transform: translateX(-50%) translateY(-35px);
+    opacity: 1;
+  }
+}
+
+@keyframes raysAppear {
+  0% {
+    opacity: 0;
+    transform: scale(.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes loadingBar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunrise-overlay.active .sunrise-sun,
+  .sunrise-overlay.active .sunrise-rays,
+  .sunrise-loader::after {
+    animation-duration: .5s;
+  }
+}
+
+@media print {
+  body, html { background: white; }
+
+  .form, .footer, .install, .sunrise-overlay,
+  #printButton {
+    display: none !important;
+  }
+
+  .app { max-width: 100%; }
+
+  .results { display: block !important; }
+
+  .result-card, .total { break-inside: avoid; }
+}
+</style>
 </head>
 
 <body>
-
 <div class="app">
 
-  <header>
-    <h1>ALOYCE WMG SMU DHAHABU</h1>
-    <p>Calculator ya kuuza dhahabu</p>
-  </header>
+<header>
+  <h1>ALOYCE WMG DHAHABU</h1>
+  <p>Calculator ya kuuza dhahabu</p>
+</header>
 
-  <div class="form">
+<div class="form">
 
-    <label>
-      1. Uzito halisi wa dhahabu baada ya kuchomwa (gramu)
-    </label>
+  <label for="goldCount">1. Idadi ya dhahabu ulizonazo</label>
+  <input
+    id="goldCount"
+    type="number"
+    min="1"
+    step="1"
+    value="1"
+    inputmode="numeric"
+    placeholder="Ingiza idadi ya dhahabu"
+  >
 
-    <input
-      id="weight"
-      type="number"
-      step="0.01"
-      min="0"
-      placeholder="Mfano: 100"
-    >
+  <div class="hint">
+  
+  </div>
 
-    <label>2. Asilimia ya dhahabu (%)</label>
+  <div id="goldFields"></div>
 
-    <input
-      id="purity"
-      type="number"
-      step="0.01"
-      min="0"
-      max="100"
-      placeholder="Mfano: 90"
-    >
+  <h3 style="color:#075b3a;margin-top:25px">BEI NA MAKATO</h3>
 
-    <label>3. Bei rasmi ya Tume (TSh/g)</label>
-
+  <label for="officialPrice">Bei rasmi ya Tume</label>
+  <div class="money-input">
     <input
       id="officialPrice"
-      type="number"
-      step="0.01"
-      min="0"
-      placeholder="Mfano: 200000"
+      type="text"
+      inputmode="decimal"
+      autocomplete="off"
+      placeholder="200,000"
     >
+    <span>/=</span>
+  </div>
 
-    <label>4. Makato ya Serikali (%)</label>
-
+  <label for="governmentFee">Makato ya Serikali (%)</label>
+  <div class="percent-input">
     <input
       id="governmentFee"
       type="number"
-      step="0.01"
       min="0"
-      placeholder="Mfano: 5"
+      max="100"
+      step="any"
+      inputmode="decimal"
+      placeholder="5"
     >
-
-    <label>5. Bei ya broker</label>
-
-    <select id="brokerUnit" onchange="updateBrokerLabel()">
-      <option value="1">Bei kwa Gram 1</option>
-      <option value="12">Bei kwa Gram 12</option>
-    </select>
-
-    <input
-      id="brokerPrice"
-      type="number"
-      step="0.01"
-      min="0"
-      placeholder="Mfano: 195000"
-    >
-
-    <div id="brokerInfo" class="broker-info">
-      Ingiza bei anayokupa broker kwa gram 1.
-    </div>
-
-    <button class="calculate" onclick="calculate()">
-      HESABU
-    </button>
-
-    <button class="clear" onclick="clearAll()">
-      FUTA
-    </button>
-
-    <button id="installButton" class="install">
-      📲 INSTALL APP
-    </button>
-
-    <div id="error" class="error" style="display:none;"></div>
-
+    <span>%</span>
   </div>
 
-  <div id="results" class="results">
+  <label for="brokerUnit">Bei ya broker inatolewa kwa kipimo gani?</label>
+  <select id="brokerUnit">
+    <option value="1">Bei kwa gramu 1</option>
+    <option value="12">Bei kwa gramu 12</option>
+  </select>
+
+  <label for="brokerPrice">Bei ya broker</label>
+  <div class="money-input">
+    <input
+      id="brokerPrice"
+      type="text"
+      inputmode="decimal"
+      autocomplete="off"
+      placeholder="195,000"
+    >
+    <span>/=</span>
+  </div>
+
+  <div id="brokerInfo" class="broker-info">
+    Ingiza bei ya broker kwa gramu 1.
+  </div>
+
+  <button type="button" class="calculate" id="calculateButton">
+    HESABU DHAHABU ZOTE
+  </button>
+
+  <button type="button" class="clear" id="clearButton">
+    FUTA TAARIFA ZOTE
+  </button>
+
+  <button type="button" id="installButton" class="install">
+    📲 INSTALL APP
+  </button>
+
+  <div id="error" class="error" role="alert"></div>
+</div>
+
+<div id="results" class="results">
+  <h2>MATOKEO YA KILA DHAHABU</h2>
+  <div id="individualResults"></div>
+
+  <div class="total">
+    <h2>JUMLA KUU YA DHAHABU ZOTE</h2>
 
     <div class="row">
-      <span>Dhahabu safi</span>
-      <span class="value" id="pureGold"></span>
+      <span>Idadi ya dhahabu</span>
+      <span class="value" id="totalCount"></span>
     </div>
 
     <div class="row">
-      <span>Thamani rasmi</span>
-      <span class="value" id="officialValue"></span>
+      <span>Jumla ya uzito</span>
+      <span class="value" id="totalWeight"></span>
     </div>
 
     <div class="row">
-      <span>Makato ya Serikali</span>
-      <span class="value" id="governmentAmount"></span>
+      <span>Jumla ya dhahabu safi</span>
+      <span class="value" id="totalPure"></span>
     </div>
 
     <div class="row">
-      <span>Bei ya broker kwa gram 1</span>
-      <span class="value" id="brokerPricePerGram"></span>
+      <span>Jumla ya thamani rasmi</span>
+      <span class="value" id="totalOfficial"></span>
     </div>
 
     <div class="row">
-      <span>Thamani ya broker</span>
-      <span class="value" id="brokerValue"></span>
+      <span>Jumla ya makato</span>
+      <span class="value" id="totalFee"></span>
     </div>
 
     <div class="row">
-      <span>Tofauti ya bei rasmi na broker</span>
-      <span class="value" id="difference"></span>
+      <span>Jumla ya thamani ya broker</span>
+      <span class="value" id="totalBroker"></span>
+    </div>
+
+    <div class="row">
+      <span>Jumla ya tofauti za bei</span>
+      <span class="value" id="totalDifference"></span>
     </div>
 
     <div class="final">
-      <small>KIASI CHA MWISHO</small>
-      <strong id="finalAmount"></strong>
+      <small>JUMLA YA KIASI CHA MWISHO</small>
+      <strong id="totalFinal"></strong>
     </div>
 
-    <div id="warning" class="warning"></div>
-
+    <div id="totalWarning" class="warning"></div>
   </div>
 
-  <div class="footer">
-    ALOYCE WMG SMU DHAHABU
+  <button type="button" id="printButton" class="calculate">
+    CHAPISHA / HIFADHI MATOKEO KAMA PDF
+  </button>
+</div>
+
+<div class="footer">ALOYCE WMG DHAHABU</div>
+</div>
+
+<div
+  id="sunriseOverlay"
+  class="sunrise-overlay"
+  role="status"
+  aria-live="polite"
+>
+  <div class="sunrise-scene">
+    <div class="sunrise-rays"></div>
+    <div class="sunrise-sun"></div>
+    <div class="sunrise-horizon"></div>
   </div>
 
+  <div class="sunrise-title">ALOYCE WMG DHAHABU</div>
+  <div class="sunrise-subtitle">
+    Jua linachomoza... tunahesabu dhahabu zako
+  </div>
+  <div class="sunrise-loader"></div>
 </div>
 
 <script>
+"use strict";
 
-function money(number) {
-  return new Intl.NumberFormat('sw-TZ', {
-    style: 'currency',
-    currency: 'TZS',
+const $ = id => document.getElementById(id);
+
+function money(value) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  }).format(number);
+  }).format(value) + "/=";
 }
 
+function fmt(value) {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2
+  }).format(value);
+}
 
-function updateBrokerLabel() {
+/* Soma bei hata kama ina koma */
+function readNumber(id) {
+  const raw = $(id).value.replace(/,/g, "").trim();
+  if (raw === "") return NaN;
+  return Number(raw);
+}
 
-  const unit = Number(
-    document.getElementById("brokerUnit").value
-  );
+/* Onyesha koma wakati wa kuandika bei */
+function formatMoneyInput(input) {
+  const oldValue = input.value;
+  const cursor = input.selectionStart ?? oldValue.length;
+  const digitsBeforeCursor = oldValue.slice(0, cursor).replace(/[^\d]/g, "").length;
 
-  const info = document.getElementById("brokerInfo");
-  const input = document.getElementById("brokerPrice");
+  let cleaned = oldValue.replace(/[^\d.]/g, "");
+  const firstDot = cleaned.indexOf(".");
 
-  if (unit === 12) {
-
-    info.innerText =
-      "Ingiza bei anayokupa broker kwa gram 12. App itagawa kwa 12 yenyewe.";
-
-    input.placeholder =
-      "Mfano: 2400000";
-
-  } else {
-
-    info.innerText =
-      "Ingiza bei anayokupa broker kwa gram 1.";
-
-    input.placeholder =
-      "Mfano: 195000";
+  if (firstDot !== -1) {
+    cleaned = cleaned.slice(0, firstDot + 1) +
+      cleaned.slice(firstDot + 1).replace(/\./g, "");
   }
+
+  const parts = cleaned.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const formatted = parts.join(".");
+  input.value = formatted;
+
+  let pos = 0;
+  let digitsSeen = 0;
+
+  while (pos < formatted.length && digitsSeen < digitsBeforeCursor) {
+    if (/\d/.test(formatted[pos])) digitsSeen++;
+    pos++;
+  }
+
+  input.setSelectionRange(pos, pos);
 }
 
+$("officialPrice").addEventListener("input", function() {
+  formatMoneyInput(this);
+});
 
-function calculate() {
+$("brokerPrice").addEventListener("input", function() {
+  formatMoneyInput(this);
+});
 
-  const weight =
-    Number(document.getElementById("weight").value);
+function showError(message) {
+  $("error").textContent = message;
+  $("error").style.display = "block";
+  $("results").style.display = "none";
+}
 
-  const purity =
-    Number(document.getElementById("purity").value);
+function hideError() {
+  $("error").textContent = "";
+  $("error").style.display = "none";
+}
 
-  const officialPrice =
-    Number(document.getElementById("officialPrice").value);
+/* Tengeneza kadi za dhahabu kulingana na idadi */
+function generateGoldFields() {
+  const raw = $("goldCount").value;
+  const count = Number(raw);
 
-  const governmentFee =
-    Number(document.getElementById("governmentFee").value);
-
-  const brokerPriceInput =
-    Number(document.getElementById("brokerPrice").value);
-
-  const brokerUnit =
-    Number(document.getElementById("brokerUnit").value);
-
-  const error =
-    document.getElementById("error");
-
-
-  if (
-    weight <= 0 ||
-    purity <= 0 ||
-    purity > 100 ||
-    officialPrice <= 0 ||
-    governmentFee < 0 ||
-    brokerPriceInput <= 0
-  ) {
-
-    error.style.display = "block";
-
-    error.innerText =
-      "Tafadhali jaza taarifa zote kwa usahihi. Asilimia ya dhahabu isiwe zaidi ya 100%.";
-
+  if (raw.trim() === "") {
+    $("goldFields").replaceChildren();
+    $("results").style.display = "none";
+    hideError();
     return;
   }
 
-
-  error.style.display = "none";
-
-
-  // 1. Dhahabu safi
-  const pureGold =
-    weight * (purity / 100);
-
-
-  // 2. Thamani rasmi
-  const officialValue =
-    pureGold * officialPrice;
-
-
-  // 3. Makato ya Serikali
-  const governmentAmount =
-    officialValue * (governmentFee / 100);
-
-
-  // 4. Bei ya broker kwa gram 1
-  let brokerPricePerGram;
-
-  if (brokerUnit === 12) {
-
-    brokerPricePerGram =
-      brokerPriceInput / 12;
-
-  } else {
-
-    brokerPricePerGram =
-      brokerPriceInput;
-  }
-
-
-  // 5. Thamani ya broker
-  const brokerValue =
-    pureGold * brokerPricePerGram;
-
-
-  // 6. Kiasi cha mwisho
-  const finalAmount =
-    brokerValue - governmentAmount;
-
-
-  // 7. Tofauti ya bei
-  const difference =
-    pureGold *
-    (officialPrice - brokerPricePerGram);
-
-
-  // Onyesha matokeo
-
-  document.getElementById("pureGold").innerText =
-    pureGold.toFixed(2) + " g";
-
-  document.getElementById("officialValue").innerText =
-    money(officialValue);
-
-  document.getElementById("governmentAmount").innerText =
-    money(governmentAmount);
-
-  document.getElementById("brokerPricePerGram").innerText =
-    money(brokerPricePerGram);
-
-  document.getElementById("brokerValue").innerText =
-    money(brokerValue);
-
-  document.getElementById("difference").innerText =
-    money(Math.abs(difference));
-
-  document.getElementById("finalAmount").innerText =
-    money(finalAmount);
-
-
-  // Tahadhari
-
-  const warning =
-    document.getElementById("warning");
-
-
-  if (brokerPricePerGram < officialPrice) {
-
-    warning.className = "warning";
-
-    warning.innerText =
-      "⚠️ Broker anakupa bei ya chini kwa " +
-      money(Math.abs(difference)) +
-      " ukilinganisha na bei rasmi.";
-
-  } else if (brokerPricePerGram > officialPrice) {
-
-    warning.className = "warning good";
-
-    warning.innerText =
-      "✓ Bei ya broker iko juu ya bei rasmi.";
-
-  } else {
-
-    warning.className = "warning good";
-
-    warning.innerText =
-      "✓ Bei ya broker ni sawa na bei rasmi.";
-  }
-
-
-  document.getElementById("results").style.display =
-    "block";
-}
-
-
-function clearAll() {
-
-  document.getElementById("weight").value = "";
-
-  document.getElementById("purity").value = "";
-
-  document.getElementById("officialPrice").value = "";
-
-  document.getElementById("governmentFee").value = "";
-
-  document.getElementById("brokerPrice").value = "";
-
-  document.getElementById("brokerUnit").value = "1";
-
-  document.getElementById("results").style.display =
-    "none";
-
-  document.getElementById("error").style.display =
-    "none";
-
-  updateBrokerLabel();
-}
-
-
-// ================================
-// PWA INSTALL
-// ================================
-
-let deferredPrompt;
-
-const installButton =
-  document.getElementById("installButton");
-
-
-window.addEventListener("beforeinstallprompt", (event) => {
-
-  event.preventDefault();
-
-  deferredPrompt = event;
-
-  installButton.style.display = "block";
-
-});
-
-
-installButton.addEventListener("click", async () => {
-
-  if (!deferredPrompt) {
+  if (!Number.isSafeInteger(count) || count < 1) {
+    $("goldFields").replaceChildren();
+    $("results").style.display = "none";
+    showError("Ingiza idadi kamili ya dhahabu kuanzia 1.");
     return;
   }
 
-  deferredPrompt.prompt();
+  /*
+    Hakuna kikomo cha idadi cha kawaida, lakini
+    kikomo cha kiusalama cha 5000 huzuia simu kuganda.
+  */
+  if (count > 5000) {
+    showError(
+      "Idadi ni kubwa sana kwa simu kuonyesha kwa wakati mmoja. " +
+      "Tafadhali tumia idadi isiyozidi 5000."
+    );
+    return;
+  }
 
-  const { outcome } =
-    await deferredPrompt.userChoice;
+  hideError();
 
-  console.log("Install result:", outcome);
+  const container = $("goldFields");
+  const oldValues = new Map();
 
-  deferredPrompt = null;
-
-  installButton.style.display = "none";
-
-});
-
-
-window.addEventListener("appinstalled", () => {
-
-  console.log("SMU Gold Calculator ime-installiwa.");
-
-  installButton.style.display = "none";
-
-});
-
-
-// ================================
-// SERVICE WORKER
-// ================================
-
-if ("serviceWorker" in navigator) {
-
-  window.addEventListener("load", () => {
-
-    navigator.serviceWorker
-      .register("service-worker.js")
-      .then(() => {
-
-        console.log(
-          "SMU Gold Calculator Service Worker iko tayari."
-        );
-
-      })
-      .catch(error => {
-
-        console.log(
-          "Service Worker Error:",
-          error
-        );
-
-      });
-
+  container.querySelectorAll(".gold-card").forEach(card => {
+    oldValues.set(card.dataset.index, {
+      weight: card.querySelector(".weight").value,
+      purity: card.querySelector(".purity").value
+    });
   });
 
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 1; i <= count; i++) {
+    const old = oldValues.get(String(i)) || {};
+
+    const card = document.createElement("section");
+    card.className = "gold-card";
+    card.dataset.index = String(i);
+
+    const heading = document.createElement("h3");
+    heading.textContent = "DHAHABU YA " + i;
+    card.appendChild(heading);
+
+    const weightLabel = document.createElement("label");
+    weightLabel.textContent = "Uzito baada ya kuchomwa (gramu)";
+    card.appendChild(weightLabel);
+
+    const weight = document.createElement("input");
+    weight.type = "number";
+    weight.min = "0";
+    weight.step = "any";
+    weight.inputMode = "decimal";
+    weight.placeholder = "Mfano: 100";
+    weight.className = "weight";
+    weight.value = old.weight || "";
+    weight.setAttribute("aria-label", "Uzito wa dhahabu " + i);
+    card.appendChild(weight);
+
+    const purityLabel = document.createElement("label");
+    purityLabel.textContent = "Asilimia ya dhahabu";
+    card.appendChild(purityLabel);
+
+    const percentBox = document.createElement("div");
+    percentBox.className = "percent-input";
+
+    const purity = document.createElement("input");
+    purity.type = "number";
+    purity.min = "0";
+    purity.max = "100";
+    purity.step = "any";
+    purity.inputMode = "decimal";
+    purity.placeholder = "Mfano: 90";
+    purity.className = "purity";
+    purity.value = old.purity || "";
+    purity.setAttribute("aria-label", "Asilimia ya dhahabu " + i);
+
+    const percentSymbol = document.createElement("span");
+    percentSymbol.textContent = "%";
+
+    percentBox.append(purity, percentSymbol);
+    card.appendChild(percentBox);
+    fragment.appendChild(card);
+  }
+
+  container.replaceChildren(fragment);
+  $("results").style.display = "none";
 }
 
+function updateBrokerLabel() {
+  $("brokerInfo").textContent =
+    Number($("brokerUnit").value) === 12
+      ? "Ingiza bei ya broker kwa gramu 12. Mfumo utagawa bei hiyo kwa 12."
+      : "Ingiza bei ya broker kwa gramu 1.";
+}
 
-// Anza na Gram 1
+function appendResultRow(parent, label, value) {
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const left = document.createElement("span");
+  left.textContent = label;
+
+  const right = document.createElement("span");
+  right.className = "value";
+  right.textContent = value;
+
+  row.append(left, right);
+  parent.appendChild(row);
+}
+
+/* Animation ya jua */
+let sunriseTimer;
+
+function showSunrise(callback) {
+  const overlay = $("sunriseOverlay");
+  $("calculateButton").disabled = true;
+
+  overlay.classList.remove("active");
+  void overlay.offsetWidth;
+  overlay.classList.add("active");
+
+  sunriseTimer = setTimeout(() => {
+    overlay.classList.remove("active");
+    $("calculateButton").disabled = false;
+    callback();
+  }, 3200);
+}
+
+/* Hesabu kila dhahabu */
+function calculate() {
+  hideError();
+
+  const count = Number($("goldCount").value);
+  const cards = [...document.querySelectorAll(".gold-card")];
+
+  if (!Number.isSafeInteger(count) || count < 1 ||
+      cards.length !== count) {
+    showError("Hakikisha idadi ya dhahabu ni sahihi.");
+    return;
+  }
+
+  const officialPrice = readNumber("officialPrice");
+  const feePercent = Number($("governmentFee").value);
+  const brokerInput = readNumber("brokerPrice");
+  const brokerUnit = Number($("brokerUnit").value);
+
+  if (!Number.isFinite(officialPrice) || officialPrice <= 0) {
+    showError("Ingiza bei rasmi ya Tume iliyo sahihi.");
+    $("officialPrice").focus();
+    return;
+  }
+
+  if ($("governmentFee").value.trim() === "" ||
+      !Number.isFinite(feePercent) ||
+      feePercent < 0 || feePercent > 100) {
+    showError("Makato ya Serikali lazima yawe kati ya 0% na 100%.");
+    $("governmentFee").focus();
+    return;
+  }
+
+  if (!Number.isFinite(brokerInput) || brokerInput <= 0) {
+    showError("Ingiza bei ya broker iliyo sahihi.");
+    $("brokerPrice").focus();
+    return;
+  }
+
+  const brokerPerGram = brokerInput / brokerUnit;
+  const golds = [];
+
+  for (let i = 0; i < cards.length; i++) {
+    const weightField = cards[i].querySelector(".weight");
+    const purityField = cards[i].querySelector(".purity");
+
+    const weight = Number(weightField.value);
+    const purity = Number(purityField.value);
+
+    if (weightField.value.trim() === "" ||
+        !Number.isFinite(weight) || weight <= 0) {
+      showError("Ingiza uzito sahihi wa dhahabu ya " + (i + 1) + ".");
+      weightField.focus();
+      return;
+    }
+
+    if (purityField.value.trim() === "" ||
+        !Number.isFinite(purity) || purity <= 0 || purity > 100) {
+      showError(
+        "Asilimia ya dhahabu ya " + (i + 1) +
+        " lazima iwe zaidi ya 0% na isizidi 100%."
+      );
+      purityField.focus();
+      return;
+    }
+
+    const pure = weight * purity / 100;
+    const official = pure * officialPrice;
+    const fee = official * feePercent / 100;
+    const broker = pure * brokerPerGram;
+
+    golds.push({
+      weight,
+      purity,
+      pure,
+      official,
+      fee,
+      broker,
+      finalAmount: broker - fee,
+      difference: Math.abs(official - broker)
+    });
+  }
+
+  const totals = golds.reduce((sum, gold) => {
+    sum.weight += gold.weight;
+    sum.pure += gold.pure;
+    sum.official += gold.official;
+    sum.fee += gold.fee;
+    sum.broker += gold.broker;
+    sum.finalAmount += gold.finalAmount;
+    sum.difference += gold.difference;
+    return sum;
+  }, {
+    weight: 0,
+    pure: 0,
+    official: 0,
+    fee: 0,
+    broker: 0,
+    finalAmount: 0,
+    difference: 0
+  });
+
+  const output = $("individualResults");
+  const fragment = document.createDocumentFragment();
+
+  golds.forEach((gold, index) => {
+    const card = document.createElement("div");
+    card.className = "result-card";
+
+    const heading = document.createElement("h3");
+    heading.textContent = "DHAHABU YA " + (index + 1);
+    card.appendChild(heading);
+
+    appendResultRow(card, "Uzito", fmt(gold.weight) + " g");
+    appendResultRow(card, "Asilimia ya usafi", fmt(gold.purity) + "%");
+    appendResultRow(card, "Dhahabu safi", fmt(gold.pure) + " g");
+    appendResultRow(card, "Thamani rasmi", money(gold.official));
+    appendResultRow(card, "Makato ya Serikali", money(gold.fee));
+    appendResultRow(card, "Bei ya broker kwa gramu 1", money(brokerPerGram));
+    appendResultRow(card, "Thamani ya broker", money(gold.broker));
+    appendResultRow(card, "Tofauti ya bei", money(gold.difference));
+    appendResultRow(card, "Kiasi cha mwisho", money(gold.finalAmount));
+
+    const warning = document.createElement("div");
+    warning.className = brokerPerGram < officialPrice
+      ? "warning"
+      : "warning good";
+
+    warning.textContent = brokerPerGram < officialPrice
+      ? "Tahadhari: Bei ya broker iko chini ya bei rasmi."
+      : brokerPerGram > officialPrice
+        ? "Bei ya broker iko juu ya bei rasmi."
+        : "Bei ya broker ni sawa na bei rasmi.";
+
+    card.appendChild(warning);
+    fragment.appendChild(card);
+  });
+
+  output.replaceChildren(fragment);
+
+  $("totalCount").textContent = String(golds.length);
+  $("totalWeight").textContent = fmt(totals.weight) + " g";
+  $("totalPure").textContent = fmt(totals.pure) + " g";
+  $("totalOfficial").textContent = money(totals.official);
+  $("totalFee").textContent = money(totals.fee);
+  $("totalBroker").textContent = money(totals.broker);
+  $("totalDifference").textContent = money(totals.difference);
+  $("totalFinal").textContent = money(totals.finalAmount);
+
+  const totalWarning = $("totalWarning");
+  totalWarning.className = brokerPerGram < officialPrice
+    ? "warning"
+    : "warning good";
+
+  totalWarning.textContent = brokerPerGram < officialPrice
+    ? "Tahadhari: Bei ya broker kwa gramu iko chini ya bei rasmi. Kagua bei na makato kabla ya kufanya malipo."
+    : brokerPerGram > officialPrice
+      ? "Bei ya broker kwa gramu iko juu ya bei rasmi."
+      : "Bei ya broker kwa gramu ni sawa na bei rasmi.";
+
+  showSunrise(() => {
+    $("results").style.display = "block";
+    $("results").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+}
+
+/* Futa taarifa zote */
+function clearAll() {
+  clearTimeout(sunriseTimer);
+  $("sunriseOverlay").classList.remove("active");
+  $("calculateButton").disabled = false;
+
+  $("goldCount").value = "1";
+  $("officialPrice").value = "";
+  $("governmentFee").value = "";
+  $("brokerPrice").value = "";
+  $("brokerUnit").value = "1";
+
+  hideError();
+  generateGoldFields();
+  updateBrokerLabel();
+
+  $("results").style.display = "none";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* Vitufe */
+$("goldCount").addEventListener("input", generateGoldFields);
+$("goldCount").addEventListener("change", generateGoldFields);
+$("brokerUnit").addEventListener("change", updateBrokerLabel);
+$("calculateButton").addEventListener("click", calculate);
+$("clearButton").addEventListener("click", clearAll);
+$("printButton").addEventListener("click", () => window.print());
+
+/* PWA install */
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredPrompt = event;
+  $("installButton").style.display = "block";
+});
+
+$("installButton").addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $("installButton").style.display = "none";
+});
+
+window.addEventListener("appinstalled", () => {
+  $("installButton").style.display = "none";
+});
+
+/* Service worker */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js")
+      .catch(error => console.error("Service Worker Error:", error));
+  });
+}
+
+/* Mwanzo */
+generateGoldFields();
 updateBrokerLabel();
-
 </script>
 
 </body>
 </html>
-```
